@@ -1,0 +1,16 @@
+{
+  "name": "hikari",
+  "version": "1.0.0",
+  "description": "Anime desktop companion that watches your dev projects",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "devDependencies": {
+    "electron": "^33.0.0"
+  },
+  "dependencies": {
+    "msedge-tts": "^2.0.7",
+    "systeminformation": "^5.23.5"
+  }
+}

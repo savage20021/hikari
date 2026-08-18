@@ -1,0 +1,5 @@
+node_modules/
+*.log
+
+# Personal customizations (persona, project list) — stays local
+config.local.json

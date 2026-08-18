@@ -1,0 +1,7 @@
+{
+  "voice": "en-US-AriaNeural",
+  "pitch": "+6Hz",
+  "rate": "+2%",
+  "model": "haiku",
+  "speakGreeting": true
+}
