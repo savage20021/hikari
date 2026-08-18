@@ -4,14 +4,20 @@ const chara = $('companion');
 
 // use the real artwork when chara.png exists; otherwise keep the SVG girl
 const charaImg = $('chara-img');
-charaImg.addEventListener('load', () => {
+function useCharaImg() {
   document.body.classList.add('img-mode');
   // tall images are full-body cutouts — float them without the card frame
   if (charaImg.naturalHeight / charaImg.naturalWidth > 1.4) {
     document.body.classList.add('cutout');
   }
-});
-charaImg.addEventListener('error', () => charaImg.remove());
+}
+// the image may finish loading before this script runs
+if (charaImg.complete && charaImg.naturalWidth > 0) {
+  useCharaImg();
+} else {
+  charaImg.addEventListener('load', useCharaImg);
+  charaImg.addEventListener('error', () => charaImg.remove());
+}
 const bubbleText = $('bubble-text');
 const bubble = $('bubble');
 
@@ -82,6 +88,17 @@ function chooseLine(data) {
   ]);
 }
 
+// Process names/command lines come from other programs — escape them
+// before they touch innerHTML (defense in depth alongside the CSP).
+function esc(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function render(data) {
   const { system, projects, others } = data;
 
@@ -102,10 +119,10 @@ function render(data) {
         (p) => `
       <div class="proj">
         <span class="dot"></span>
-        <span class="emoji">${p.emoji}</span>
+        <span class="emoji">${esc(p.emoji)}</span>
         <div class="info">
-          <div class="pname">${p.name}</div>
-          <div class="psub">${p.count} process${p.count > 1 ? 'es' : ''} · ${p.procs.map((x) => x.name).join(', ')}</div>
+          <div class="pname">${esc(p.name)}</div>
+          <div class="psub">${p.count} process${p.count > 1 ? 'es' : ''} · ${esc(p.procs.map((x) => x.name).join(', '))}</div>
         </div>
         <div class="pstats">
           <div class="cpu">${p.cpu.toFixed(1)}% CPU</div>
@@ -125,8 +142,8 @@ function render(data) {
         (o) => `
       <div class="other">
         <div class="info">
-          <div class="pname">${o.name} <span style="opacity:.5;font-weight:400">· ${o.pid}</span></div>
-          <div class="psub" title="${o.cmd.replace(/"/g, '&quot;')}">${o.cmd || '—'}</div>
+          <div class="pname">${esc(o.name)} <span style="opacity:.5;font-weight:400">· ${o.pid}</span></div>
+          <div class="psub" title="${esc(o.cmd)}">${esc(o.cmd) || '—'}</div>
         </div>
         <div class="pstats">
           <div class="cpu">${o.cpu.toFixed(1)}%</div>

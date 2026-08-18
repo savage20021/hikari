@@ -16,6 +16,7 @@ const DEMO_STATS = {
 
 app.whenReady().then(async () => {
   ipcMain.handle('stats:get', () => DEMO_STATS);
+  ipcMain.handle('config:get', () => ({ speakGreeting: false }));
   const win = new BrowserWindow({
     width: 280,
     height: 548,
